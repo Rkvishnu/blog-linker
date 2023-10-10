@@ -17,7 +17,6 @@ const BlogDetails = () => {
         setInputs({
           title: data?.blog.title,
           description: data?.blog.description,
-          image: data?.blog.image,
         });
       }
     } catch (error) {
@@ -43,7 +42,6 @@ const BlogDetails = () => {
       const { data } = await axios.put(`/api/v1/blog/update-blog/${id}`, {
         title: inputs.title,
         description: inputs.description,
-        image: inputs.image,
         user: id,
       });
       if (data?.success) {
@@ -104,19 +102,8 @@ const BlogDetails = () => {
             variant="outlined"
             required
           />
-          <InputLabel
-            sx={{ mb: 1, mt: 2, fontSize: "24px", fontWeight: "bold" }}
-          >
-            Image URL
-          </InputLabel>
-          <TextField
-            name="image"
-            value={inputs.image}
-            onChange={handleChange}
-            margin="normal"
-            variant="outlined"
-            required
-          />
+         
+          
           <Button type="submit" color="warning" variant="contained">
             UPDATE
           </Button>

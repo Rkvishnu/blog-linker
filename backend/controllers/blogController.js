@@ -33,10 +33,10 @@ export const getAllBlogsController = async (req, res) => {
 //create blog
 export const createBlogController = async (req, res) => {
   try {
-    const { title, description, image, user } = req.body;
+    const { title, description, user } = req.body;
 
     //validations
-    if (!title || !description || !image || !user) {
+    if (!title || !description || !user) {
       return res.status(400).json({
         sucess: false,
         message: "Please provide all fields",
@@ -56,7 +56,6 @@ export const createBlogController = async (req, res) => {
     const newBlog = new blogModel({
       title,
       description,
-      image,
       user,
     });
 

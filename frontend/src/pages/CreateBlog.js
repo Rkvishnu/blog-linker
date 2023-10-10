@@ -18,6 +18,7 @@ const CreateBlog = () => {
       [e.target.name]: e.target.value,
     }));
   };
+
   //form
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -84,7 +85,7 @@ const CreateBlog = () => {
             variant="outlined"
             required
           />
-          <InputLabel
+          {/* <InputLabel
             sx={{ mb: 1, mt: 2, fontSize: "24px", fontWeight: "bold" }}
           >
             Image URL
@@ -96,7 +97,7 @@ const CreateBlog = () => {
             margin="normal"
             variant="outlined"
             required
-          />
+          /> */}
           <Button type="submit" color="primary" variant="contained">
             SUBMIT
           </Button>

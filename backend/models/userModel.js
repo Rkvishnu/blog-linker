@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
-// import Blog from './blogModel.js';
-
+  
 const userSchema = new mongoose.Schema(
   {
     username: {
@@ -22,7 +21,10 @@ const userSchema = new mongoose.Schema(
       },
     ],
   },
-  { timestamps: true }
+  { timestamps: true },
+  // {
+  //   strictQuery: true,
+  // }
 );
 
 const userModel = mongoose.model("User", userSchema);
