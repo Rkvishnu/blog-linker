@@ -8,6 +8,12 @@ pipeline {
     }
     stages {
         
+          stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+        
         stage("Deploy to EKS") {
             steps {
                 script {
