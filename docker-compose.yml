@@ -4,28 +4,38 @@ services:
     container_name: mongodb
     image: mongo
     ports:
-      -  27017
+      - 27017
 
   server:
     container_name: server
-    image: blogs-server
+    image: rkvishnu77/blogs-server
     build:
       context: ./backend
       dockerfile: Dockerfile
     environment:
       - MONGO_URL = 'mongodb://mongo:27017/my-blogs-db'
     ports:
-      -  8000:8000
+      - 8000:8000
     depends_on:
       - mongodb
     restart: unless-stopped
-  
+
   client:
     container_name: client
-    image: blogs-client
+    image: rkvishnu77/blogs-client
     build:
       context: ./frontend
       dockerfile: Dockerfile
     ports:
       - 3000:3000
     restart: unless-stopped
+
+  nginx:
+    build:
+      context: ./nginx 
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - client
+      - server
