@@ -23,10 +23,10 @@ app.use("/api/v1/blog", blogRouter);
 
 const PORT = 8000;
 // const MONGO_URL = 'mongodb://127.0.0.1:27017/my-blogs-db';
-const MONGO_URL = 'mongodb://mongo:27017/my-blogs-db';
+const MONGO_URI = 'mongodb://mongo:27017/my-blogs-db';
 
 
-mongoose.connect(MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
     console.log('Connected to MongoDB Database');
   })
