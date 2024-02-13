@@ -1,23 +1,74 @@
-# This workflow was added by CodeSee. Learn more at https://codesee.io/
-# This is v2.0 of this workflow file
+
+name: Build and Deploy
+
 on:
   push:
     branches:
       - main
-  pull_request_target:
-    types: [opened, synchronize, reopened]
 
-name: CodeSee
+# Set environment variables
+env:
+  MONGODB_URI: ${{ secrets.MONGODB_URI }}
+  PASSWORD: ${{ secrets.PASSWORD }}
 
-permissions: read-all
-
+# This is the workflow that is being run.
 jobs:
-  codesee:
+  build-and-deploy:
+ 
     runs-on: ubuntu-latest
-    continue-on-error: true
-    name: Analyze the repo with CodeSee
     steps:
-      - uses: Codesee-io/codesee-action@v2
+      # Checkout the code from the GitHub repository
+      - name: Checkout code
+        uses: actions/checkout@v3
+  
+      # Log in to Docker Hub using credentials from repository secrets
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
         with:
-          codesee-token: ${{ secrets.CODESEE_ARCH_DIAG_API_TOKEN }}
-          codesee-url: https://app.codesee.io
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          
+      # Build a Docker image for the client application
+      - name: Build  and Tag Client Docker Image
+        working-directory: ./client
+         
+        run: |
+          docker build -t blogs-server:latest .
+          docker tag blogs-client:latest ${{DOCKER_USERNAME}}/blogs-client:latest 
+
+      # Build a Docker image for the server application
+      - name: Build and Tag Server Docker Image
+        working-directory: ./server
+        run: |
+          docker build -t blogs-server:latest .
+          docker tag blogs-server:latest ${{DOCKER_USERNAME}}/blogs-server:latest 
+
+      # Build a Docker image for the NGINX reverse proxy
+      - name: Build NGINX Docker Image
+        working-directory: ./nginx
+        run: |
+          docker build -t nginx:latest .
+          docker tag nginx:latest ${{DOCKER_USERNAME}}/nginx:latest
+
+
+      # Push the Docker images to Docker Hub
+      - name: Push Docker Images to Docker Hub
+        run: |
+          docker push ${{DOCKER_USERNAME}}/blogs-client:latest
+          docker push ${{DOCKER_USERNAME}}/blogs-server:latest
+          docker push ${{DOCKER_USERNAME}}/blogs-nginx:latest
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+         aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+         aws-region: us-east-1
+
+      - name: Update kubeconfig for Amazon EKS
+        run: aws eks update-kubeconfig --name eks-cluster-one --region us-east-1
+
+      - name: Deploy on Kubernetes
+        run: |
+          kubectl apply -f ./kubernetes
+          
